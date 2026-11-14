@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>PROPOSAL MANAGEMENT | SIMPATI 555</title>
+    <style>
+        :root {
+            --maroon: #5b1018;
+            --deep: #31090e;
+            --gold: #d8b15a;
+            --cream: #f7f1e8;
+            --ink: #292321;
+            --muted: #756c68;
+            --line: #e7ddd2;
+            --white: #fff
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: #f1eeeb;
+            color: var(--ink);
+            font: 15px/1.55 Inter, Segoe UI, Arial, sans-serif
+        }
+
+        .top {
+            background: linear-gradient(120deg, var(--deep), var(--maroon));
+            color: white;
+            padding: 22px max(22px, calc((100% - 1180px)/2));
+            border-bottom: 4px solid var(--gold)
+        }
+
+        .brand {
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: #e9d6aa;
+            font-weight: 700
+        }
+
+        .top h1 {
+            margin: 5px 0 2px;
+            font-size: 25px
+        }
+
+        .top p {
+            margin: 0;
+            color: #f1e9e1
+        }
+
+        .wrap {
+            max-width: 1180px;
+            margin: 24px auto;
+            padding: 0 18px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 20px
+        }
+
+        .panel,
+        .side {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px #32100b0b
+        }
+
+        .panel {
+            padding: 24px
+        }
+
+        .side {
+            padding: 20px;
+            height: max-content;
+            position: sticky;
+            top: 16px
+        }
+
+        h2 {
+            font-size: 18px;
+            color: var(--maroon);
+            margin: 0 0 15px
+        }
+
+        .section {
+            padding: 0 0 22px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .section:last-child {
+            border: 0;
+            margin: 0;
+            padding: 0
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px
+        }
+
+        .field.full {
+            grid-column: 1/-1
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #514642
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d9cec5;
+            border-radius: 8px;
+            background: #fff;
+            font: inherit;
+            color: var(--ink)
+        }
+
+        textarea {
+            min-height: 85px;
+            resize: vertical
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: 2px solid #d8b15a66;
+            border-color: var(--gold)
+        }
+
+        .help {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .required {
+            color: #a5232c
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 9px;
+            padding: 11px 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font: inherit
+        }
+
+        .primary {
+            background: var(--maroon);
+            color: white
+        }
+
+        .primary:hover {
+            background: var(--deep)
+        }
+
+        .secondary {
+            background: #f4ead7;
+            color: var(--maroon);
+            border: 1px solid #e7d2a4
+        }
+
+        .danger {
+            background: #fff0ef;
+            color: #9a2020
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed
+        }
+
+        .uploadbox {
+            border: 1px dashed #c9b8a7;
+            background: #fcfaf7;
+            border-radius: 10px;
+            padding: 14px
+        }
+
+        .thumbs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            gap: 10px;
+            margin-top: 12px
+        }
+
+        .thumb {
+            position: relative;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            overflow: hidden;
+            background: white
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 88px;
+            object-fit: cover;
+            display: block
+        }
+
+        .thumb small {
+            display: block;
+            padding: 5px;
+            font-size: 10px;
+            overflow-wrap: anywhere
+        }
+
+        .thumb button {
+            position: absolute;
+            right: 4px;
+            top: 4px;
+            border: 0;
+            background: #fff;
+            color: #8f2020;
+            border-radius: 50%;
+            width: 23px;
+            height: 23px;
+            cursor: pointer
+        }
+
+        .tablewrap {
+            overflow: auto
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 620px
+        }
+
+        th,
+        td {
+            border: 1px solid var(--line);
+            padding: 8px;
+            text-align: left;
+            font-size: 13px
+        }
+
+        th {
+            background: #f8f1e6;
+            color: var(--maroon)
+        }
+
+        td input {
+            padding: 7px;
+            border: 1px solid #e4dcd5
+        }
+
+        .total {
+            text-align: right;
+            font-weight: 800;
+            color: var(--maroon);
+            padding: 12px
+        }
+
+        .notice {
+            padding: 12px;
+            border-radius: 9px;
+            background: #fff8e9;
+            border: 1px solid #f0dfb9;
+            color: #6c5426;
+            font-size: 13px
+        }
+
+        .status {
+            font-size: 12px;
+            color: var(--muted);
+            margin: 9px 0
+        }
+
+        .side h3 {
+            color: var(--maroon);
+            margin: 0 0 8px
+        }
+
+        .side ol {
+            padding-left: 20px;
+            color: #615650;
+            font-size: 13px
+        }
+
+        .side li {
+            margin: 7px 0
+        }
+
+        .side .btn {
+            width: 100%;
+            margin-top: 9px
+        }
+
+        #proposal {
+            display: none;
+            max-width: 850px;
+            margin: 26px auto;
+            background: #fff;
+            padding: 26px;
+            border: 1px solid var(--line);
+            border-radius: 12px
+        }
+
+        .proposal-toolbar {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            max-width: 850px;
+            margin: 18px auto 0
+        }
+
+        .paper {
+            padding: 48px 54px;
+            min-height: 1050px;
+            border: 1px solid #eee;
+            margin: 0 auto 18px;
+            position: relative;
+            background: white;
+            box-shadow: 0 3px 15px #0000000a
+        }
+
+        .cover {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 950px
+        }
+
+        .cover .org {
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            color: var(--maroon);
+            font-size: 18px
+        }
+
+        .cover .rule {
+            width: 90px;
+            border-top: 4px solid var(--gold);
+            margin: 24px
+        }
+
+        .cover h1 {
+            font-size: 29px;
+            line-height: 1.35;
+            color: var(--maroon);
+            margin: 20px 0;
+            text-transform: uppercase
+        }
+
+        .cover .sub {
+            font-size: 18px;
+            font-weight: 700
+        }
+
+        .cover .meta {
+            margin-top: 100px;
+            line-height: 1.8
+        }
+
+        .doc h2 {
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 8px;
+            margin: 22px 0 12px
+        }
+
+        .doc h3 {
+            color: var(--maroon);
+            margin-bottom: 5px
+        }
+
+        .doc p {
+            text-align: justify;
+            margin: 8px 0
+        }
+
+        .doc ul {
+            padding-left: 22px
+        }
+
+        .doc table {
+            min-width: 0;
+            margin: 12px 0
+        }
+
+        .doc th,
+        .doc td {
+            font-size: 12px
+        }
+
+        .page-title {
+            text-align: center;
+            color: var(--maroon);
+            font-weight: 800;
+            margin: 0 0 24px
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px
+        }
+
+        .photo-card {
+            border: 1px solid var(--line);
+            padding: 8px;
+            break-inside: avoid
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            background: #f6f3ef
+        }
+
+        .photo-card div {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 6px
+        }
+
+        .signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 45px;
+            margin-top: 40px;
+            text-align: center
+        }
+
+        .signbox {
+            min-height: 210px
+        }
+
+        .signspace {
+            height: 95px
+        }
+
+        .signname {
+            font-weight: 700;
+            text-decoration: underline
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        @media(max-width:900px) {
+            .wrap {
+                grid-template-columns: 1fr
+            }
+
+            .side {
+                position: static
+            }
+
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            .paper {
+                padding: 28px 22px;
+                min-height: auto
+            }
+
+            .cover {
+                min-height: 750px
+            }
+        }
+
+        @media print {
+            body {
+                background: white
+            }
+
+            .top,
+            .wrap,
+            .proposal-toolbar {
+                display: none !important
+            }
+
+            #proposal {
+                display: block !important;
+                border: 0;
+                margin: 0;
+                padding: 0;
+                max-width: none
+            }
+
+            .paper {
+                border: 0;
+                box-shadow: none;
+                margin: 0;
+                padding: 20mm 18mm;
+                min-height: 0;
+                page-break-after: always;
+                break-after: page
+            }
+
+            .paper:last-child {
+                page-break-after: auto;
+                break-after: auto
+            }
+
+            @page {
+                size: A4;
+                margin: 0
+            }
+
+            .doc table {
+                page-break-inside: avoid
+            }
+
+            .photo-card {
+                page-break-inside: avoid
+            }
+        }
+    </style>
+<style>#userbar{position:fixed;top:12px;right:16px;z-index:99999;display:flex;gap:10px;align-items:center;max-width:calc(100vw - 32px);background:#31090e;color:#fff;border:1px solid #d8b15a;border-radius:10px;padding:7px 8px 7px 12px;font:13px system-ui,sans-serif;box-shadow:0 6px 18px #0007}#userbar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#userbar button{background:linear-gradient(110deg,#c4263a,#7d1020);color:#fff;border:1px solid #d8b15a;border-radius:8px;padding:7px 14px;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}@media(max-width:560px){#userbar span{display:none}}@media print{#userbar{display:none!important}}</style></head>
+
+<body>
+<div id="userbar"><span id="userbarText">Memuat akun...</span><button type="button" id="logoutBtn" title="Keluar dan kembali ke halaman login">⎋ Keluar</button></div>
+    <header class="top">
+        <div class="brand">SIMPATI 555 · MODUL PROPOSAL MANAGEMENT</div>
+        <h1>PROPOSAL MANAGEMENT</h1>
+        <p>Ruang kerja DPS untuk menyusun proposal bantuan, kebutuhan internal organisasi, kegiatan, dan pengajuan lainnya.</p>
+    </header>
+    <div class="wrap" id="workspace">
+        <main class="panel">
+            <form id="proposalForm">
+                <section class="section">
+                    <h2>01 · Identitas dan pengajuan</h2>
+                    <div class="grid">
+                        <div class="field"><label>Kategori proposal <span class="required">*</span></label><select id="proposalCategory" required>
+                            <option value="Bantuan UMKM / usaha">Bantuan UMKM / usaha</option>
+                            <option value="Kebutuhan internal organisasi">Kebutuhan internal organisasi</option>
+                            <option value="Pengadaan sarana dan prasarana">Pengadaan sarana dan prasarana</option>
+                            <option value="Kegiatan organisasi">Kegiatan organisasi</option>
+                            <option value="Kerja sama / kemitraan">Kerja sama / kemitraan</option>
+                            <option value="Bantuan sosial / kemasyarakatan">Bantuan sosial / kemasyarakatan</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select></div>
+                        <div class="field"><label>Identitas pengusul</label><select id="applicantType"><option value="Perorangan">Perorangan</option><option value="Organisasi / unit kepengurusan">Organisasi / unit kepengurusan</option></select></div>
+                        <div class="field full"><label>Sumber data pemohon / pengusul</label><select id="dataSource"><option value="manual">Pengisian manual</option><option id="surveySourceOption" value="survey" disabled>Ambil dari hasil verifikasi Survei GPS (menunggu koneksi lisensi)</option></select><span class="help">Pengisian manual selalu diperbolehkan, termasuk saat modul Survei GPS aktif dalam lisensi.</span></div>
+                        <div class="field full" id="verifiedSurveyWrap" style="display:none"><label>Pilih data hasil verifikasi Survei GPS</label><select id="verifiedSurvey"><option value="">Memuat daftar hasil verifikasi...</option></select><div class="help" id="surveyStatus">Daftar hanya memuat hasil yang sudah diverifikasi dan berada dalam kewenangan wilayah akun.</div></div>
+                        <div class="field full"><label>Judul Proposal <span class="required">*</span></label><input
+                                id="title" required placeholder="Isi judul proposal sesuai permohonan sebenarnya"><span
+                                class="help">Judul dipakai persis seperti yang DPS isi. AI tidak membuat atau mengubah
+                                judul.</span></div>
+                        <div class="field"><label id="applicantLabel">Nama pemohon / penanggung jawab <span class="required">*</span></label><input id="applicant" required placeholder="Nama pemohon atau pengusul"></div>
+                        <div class="field"><label>Nama usaha / lembaga / kegiatan <span
+                                    class="required">*</span></label><input id="business" required
+                                placeholder="Contoh: Warung Bu Sari, Masjid Al-Ikhlas, Festival Budaya Desa"></div>
+                        <div class="field"><label>Jenis pengajuan</label><select id="kind">
+                                <option value="Kebutuhan organisasi">Kebutuhan organisasi</option>
+                                <option value="Pengadaan barang / peralatan kantor">Pengadaan barang / peralatan kantor</option>
+                                <option value="Usaha yang sudah berjalan">Usaha yang sudah berjalan</option>
+                                <option value="Usaha baru / rencana usaha">Usaha baru / rencana usaha</option>
+                                <option value="Tempat ibadah / fasilitas umum">Tempat ibadah / fasilitas umum</option>
+                                <option value="Kegiatan budaya / sosial / keagamaan">Kegiatan budaya / sosial / keagamaan</option>
+                                <option value="Kerja sama / kemitraan">Kerja sama / kemitraan</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select></div>
+                        <div class="field"><label>Bidang / jenis kegiatan</label><input id="sector"
+                                placeholder="Contoh: kuliner, pertanian, tempat ibadah, kesenian"></div>
+                        <div class="field"><label>Alamat / lokasi</label><input id="address"
+                                placeholder="Alamat atau lokasi"></div>
+                        <div class="field"><label>Nama petugas verifikasi</label><input id="verifier" placeholder="Terisi otomatis dari Survei GPS atau diisi manual"></div>
+                        <div class="field"><label>Wilayah DPS Kecamatan <span class="required">*</span></label><input
+                                id="territory" required placeholder="Nama kecamatan, kabupaten/kota"></div>
+                        <div class="field"><label>Tanggal proposal</label><input id="date" type="date"></div>
+                        <div class="field full"><label>Gambaran kondisi saat ini <span
+                                    class="required">*</span></label><textarea id="condition" required
+                                placeholder="Masukkan kondisi nyata (usaha, tempat, atau kegiatan) berdasarkan informasi/survei yang sudah diperiksa. Untuk usaha atau kegiatan baru, jelaskan rencana dan kesiapannya."></textarea>
+                        </div>
+                        <div class="field full"><label>Permasalahan yang dihadapi <span
+                                    class="required">*</span></label><textarea id="problem" required
+                                placeholder="Jelaskan kendala yang benar-benar dialami pemohon."></textarea></div>
+                        <div class="field full"><label>Maksud, tujuan, dan manfaat yang diharapkan</label><textarea
+                                id="purpose"
+                                placeholder="Isi tujuan dan manfaat sesuai keterangan pemohon/DPS."></textarea></div>
+                        <div class="field full"><label>Rencana pemanfaatan bantuan</label><textarea id="utilization"
+                                placeholder="Jelaskan rencana penggunaan bantuan berdasarkan keterangan yang tersedia."></textarea>
+                        </div>
+                    </div>
+                </section>
+                <section class="section">
+                    <h2>02 · Rencana Anggaran Biaya (RAB)</h2>
+                    <div class="tablewrap">
+                        <table id="rabTable">
+                            <thead>
+                                <tr>
+                                    <th>Uraian barang/kebutuhan</th>
+                                    <th>Volume</th>
+                                    <th>Satuan</th>
+                                    <th>Harga satuan (Rp)</th>
+                                    <th>Jumlah (Rp)</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="rabBody"></tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn secondary" id="addRab">＋ Tambah item RAB</button>
+                    <div class="total" id="grandTotal">Total: Rp0</div>
+                </section>
+                <section class="section">
+                    <h2>03 · Identitas visual pemohon / pengusul</h2>
+                    <div class="notice">Jika memakai hasil verifikasi Survei GPS, foto diri dan KTP akan diambil dari arsip survei. Jika pengisian manual, unggah dokumen secara manual. Untuk proposal atas nama organisasi, lampiran identitas perorangan dapat dikosongkan jika tidak relevan.</div>
+                    <div class="grid" style="margin-top:12px">
+                        <div class="uploadbox"><label for="portraitFile">Foto diri pemohon</label><input id="portraitFile" type="file" accept="image/*"><div class="thumbs" id="portraitThumbs"></div></div>
+                        <div class="uploadbox"><label for="ktpFile">Foto KTP pemohon</label><input id="ktpFile" type="file" accept="image/*"><div class="thumbs" id="ktpThumbs"></div></div>
+                    </div>
+                </section>
+                <section class="section">
+                    <h2>04 · Dokumentasi kondisi lapangan</h2>
+                    <div class="notice">Kelompok ini khusus foto kondisi nyata di lapangan. Foto dapat berasal dari hasil verifikasi Survei GPS atau diunggah manual. Foto sumber tidak diubah atau ditimpa.</div>
+                    <div class="uploadbox" style="margin-top:12px"><label for="surveyFiles">Pilih beberapa foto kondisi
+                            lapangan</label><input id="surveyFiles" type="file" accept="image/*" multiple>
+                        <div class="help">Bisa pilih banyak foto sekaligus, lalu pilih lagi untuk menambahkan foto
+                            berikutnya.</div>
+                        <div class="thumbs" id="surveyThumbs"></div>
+                    </div>
+                </section>
+                <section class="section">
+                    <h2>05 · Gambar pendukung permohonan</h2>
+                    <div class="notice">Kelompok terpisah untuk gambar barang, mesin, spesifikasi, desain fasilitas,
+                        atau contoh barang yang dilampirkan. Gambar ini bukan bukti kondisi aktual di lapangan.</div>
+                    <div class="uploadbox" style="margin-top:12px"><label for="supportFiles">Pilih beberapa gambar
+                            pendukung</label><input id="supportFiles" type="file" accept="image/*" multiple>
+                        <div class="help">Dapat memilih banyak file dalam satu dialog dan menambah file lagi kemudian.
+                            Setiap gambar dapat dihapus sendiri.</div>
+                        <div class="thumbs" id="supportThumbs"></div>
+                    </div>
+                </section>
+                <section class="section">
+                    <h2>06 · Data pengesahan</h2>
+                    <div class="grid">
+                        <div class="field"><label>Nama Sekretaris DPS</label><input id="secretary" readonly
+                                placeholder="Menunggu data pejabat dari CORE SIMPATI"></div>
+                        <div class="field"><label>Nama Ketua DPS</label><input id="chair" readonly
+                                placeholder="Menunggu data pejabat dari CORE SIMPATI"></div>
+                    </div>
+                    <p class="help">Nama Sekretaris dan Ketua DPS bersumber dari CORE SIMPATI sesuai wilayah akun. Kolom dikunci agar tidak dapat diisi atau diubah manual. Jika data pejabat belum tersedia dari CORE, pengesahan harus ditandai belum lengkap.</p>
+                </section>
+                <div class="notice">Prototipe antarmuka ini menyiapkan dua jalur sumber data: hasil verifikasi Survei GPS atau pengisian manual. Koneksi API Survei GPS, hak lisensi, dan data pejabat CORE harus diaktifkan pada backend SIMPATI sebelum digunakan operasional.</div>
+                <button class="btn primary" type="submit" style="margin-top:14px">GENERATE PROPOSAL</button>
+                <div class="status" id="formStatus" aria-live="polite">Lengkapi kolom wajib dan judul proposal sebelum
+                    membuat dokumen.</div>
+            </form>
+        </main>
+        <aside class="side">
+            <h3>Alur kerja proposal</h3>
+            <ol>
+                <li>Isi judul proposal sesuai permohonan sebenarnya.</li>
+                <li>Pilih kategori proposal dan sumber data. Hasil verifikasi Survei GPS dapat dipilih jika tersedia, atau gunakan pengisian manual.</li>
+                <li>Lengkapi identitas pengusul, kondisi, dan kebutuhan. Pengusul dapat berupa perorangan maupun unit organisasi.</li>
+                <li>Masukkan RAB sesuai kebutuhan yang diajukan.</li>
+                <li>Tambahkan dokumentasi kondisi dan gambar pendukung pada kelompok masing-masing.</li>
+                <li>Generate, tinjau seluruh halaman, lalu cetak atau simpan sebagai PDF.</li>
+            </ol>
+            <div class="notice" id="aiStatus">Memeriksa kesiapan layanan penyusunan proposal...</div>
+            <div class="notice" style="margin-top:8px">Penyusunan proposal dilakukan berdasarkan judul, rincian
+                kebutuhan, dan informasi yang disampaikan oleh DPS/pemohon.</div>
+            <button class="btn secondary" type="button" id="sampleBtn">Isi contoh data</button>
+        </aside>
+    </div>
+    <div class="proposal-toolbar" id="toolbar" style="display:none"><button class="btn secondary" id="backBtn">Kembali
+            ke formulir</button><button class="btn primary" id="printBtn">Cetak / Simpan PDF</button></div>
+    <div id="proposal"></div>
+    <script>
+        const $ = id => document.getElementById(id);
+        const files = {portrait: [], ktp: [], survey: [], support: []};
+        function rupiah(n) {return new Intl.NumberFormat('id-ID', {style: 'currency', currency: 'IDR', maximumFractionDigits: 0}).format(n || 0)}
+        function addRabRow(item = {name: '', qty: 1, unit: 'unit', price: 0}) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td><input aria-label="Uraian" class="rname" value="${esc(item.name)}" placeholder="Nama barang/kebutuhan"></td><td><input aria-label="Volume" class="rqty" type="number" min="0" step="any" value="${item.qty}"></td><td><input aria-label="Satuan" class="runit" value="${esc(item.unit)}"></td><td><input aria-label="Harga satuan" class="rprice" type="number" min="0" value="${item.price}"></td><td class="subtotal">Rp0</td><td><button type="button" class="btn danger remove">Hapus</button></td>`;
+            tr.querySelectorAll('input').forEach(x => x.addEventListener('input', calcRab));
+            tr.querySelector('.remove').onclick = () => {tr.remove(); calcRab()};
+            $('rabBody').appendChild(tr); calcRab();
+        }
+        function calcRab() {let total = 0; document.querySelectorAll('#rabBody tr').forEach(tr => {let q = Number(tr.querySelector('.rqty').value) || 0, p = Number(tr.querySelector('.rprice').value) || 0, s = q * p; total += s; tr.querySelector('.subtotal').textContent = rupiah(s)}); $('grandTotal').textContent = 'Total: ' + rupiah(total)}
+        function esc(s) {return String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]))}
+        function addFiles(group, list) {for (const f of list) {if (!f.type.startsWith('image/')) continue; if (files[group].some(x => x.name === f.name && x.size === f.size)) continue; files[group].push(f)} renderFiles(group)}
+        function renderFiles(group) {const box = $(({portrait:'portraitThumbs',ktp:'ktpThumbs',survey:'surveyThumbs',support:'supportThumbs'})[group]); box.innerHTML = ''; files[group].forEach((f, i) => {const url = URL.createObjectURL(f), card = document.createElement('div'); card.className = 'thumb'; card.innerHTML = `<button type="button" title="Hapus gambar" aria-label="Hapus gambar">×</button><img src="${url}" alt=""><small>${esc(f.name)}</small>`; card.querySelector('button').onclick = () => {files[group].splice(i, 1); renderFiles(group)}; box.appendChild(card)})}
+        $('portraitFile').addEventListener('change', e => {files.portrait=[]; addFiles('portrait', e.target.files); e.target.value = ''});
+        $('ktpFile').addEventListener('change', e => {files.ktp=[]; addFiles('ktp', e.target.files); e.target.value = ''});
+        $('surveyFiles').addEventListener('change', e => {addFiles('survey', e.target.files); e.target.value = ''});
+        $('supportFiles').addEventListener('change', e => {addFiles('support', e.target.files); e.target.value = ''});
+        let selectedSurveyRecord = null;
+        function setSourceMode(){const fromSurvey=$('dataSource').value==='survey';$('verifiedSurveyWrap').style.display=fromSurvey?'block':'none';$('surveyStatus').textContent=fromSurvey?'Memuat hasil verifikasi yang tersedia...':'Pilih hasil verifikasi untuk mengisi data secara otomatis.';}
+        $('dataSource').addEventListener('change', async()=>{if($('dataSource').value!=='survey'){selectedSurveyRecord=null;$('verifiedSurvey').innerHTML='<option value="">Pilih hasil verifikasi...</option>';}setSourceMode();if($('dataSource').value==='survey')await loadVerifiedSurveys();});
+        $('applicantType').addEventListener('change',()=>{$('applicantLabel').innerHTML=$('applicantType').value==='Organisasi / unit kepengurusan'?'Nama organisasi / unit pengurus <span class=\"required\">*</span>':'Nama pemohon / penanggung jawab <span class=\"required\">*</span>';});
+        async function checkSurveyEntitlement(){const opt=$('surveySourceOption');try{const r=await fetch('/api/integrations/survey/status',{headers:{'Accept':'application/json'}});if(!r.ok)throw new Error('status endpoint belum tersedia');const st=await r.json();const enabled=!!(st.enabled||st.active||st.licensed);opt.disabled=!enabled;opt.textContent=enabled?'Ambil dari hasil verifikasi Survei GPS':'Survei GPS tidak termasuk dalam lisensi';if(!enabled && $('dataSource').value==='survey')$('dataSource').value='manual';}catch(e){opt.disabled=true;opt.textContent='Ambil dari hasil verifikasi Survei GPS (integrasi lisensi belum aktif)';}setSourceMode();}
+        async function loadVerifiedSurveys(){const sel=$('verifiedSurvey');sel.innerHTML='<option value=\"\">Memuat daftar hasil verifikasi...</option>';try{const r=await fetch('/api/integrations/survey/verified-results',{headers:{'Accept':'application/json'}});if(!r.ok)throw new Error('Layanan daftar hasil verifikasi belum tersedia.');const data=await r.json();const rows=Array.isArray(data)?data:(data.items||[]);sel.innerHTML='<option value=\"\">Pilih hasil verifikasi...</option>';rows.forEach(x=>{const o=document.createElement('option');o.value=x.id||x.survey_id;o.textContent=[x.applicant_name||x.name||'Tanpa nama',x.business_name||x.business||'',x.village||'',x.verified_at||''].filter(Boolean).join(' · ');o.dataset.record=JSON.stringify(x);sel.appendChild(o)});$('surveyStatus').textContent=rows.length?rows.length+' hasil verifikasi tersedia. Pilih salah satu untuk mengisi formulir.':'Belum ada hasil verifikasi. Gunakan pengisian manual jika diperlukan.';}catch(e){sel.innerHTML='<option value=\"\">Daftar hasil verifikasi belum terhubung</option>';$('surveyStatus').textContent=e.message+' Pengisian manual tetap dapat digunakan.';}}
+        $('verifiedSurvey').addEventListener('change',async()=>{const id=$('verifiedSurvey').value;if(!id)return;try{const r=await fetch('/api/integrations/survey/verified-results/'+encodeURIComponent(id),{headers:{'Accept':'application/json'}});if(!r.ok)throw new Error('Detail hasil verifikasi belum dapat diambil.');const d=await r.json();selectedSurveyRecord=d;$('applicant').value=d.applicant_name||d.applicant||'';$('business').value=d.business_name||d.business||'';$('address').value=d.address||d.business_address||'';if(!window.__me)$('territory').value=d.territory_name||[d.district,d.regency,d.province].filter(Boolean).join(', ');$('sector').value=d.sector||d.business_sector||'';$('verifier').value=d.verifier_name||d.verification_officer_name||'';$('condition').value=d.business_condition||d.condition||'';$('problem').value=d.business_issues||d.problem||'';if(Array.isArray(d.rab_items)&&d.rab_items.length){$('rabBody').innerHTML='';d.rab_items.forEach(x=>addRabRow({name:x.name,qty:x.qty,unit:x.unit,price:x.price}))}$('applicantType').value='Perorangan';$('applicantType').dispatchEvent(new Event('change'));$('surveyStatus').textContent='Data verifikasi berhasil dimuat. Data sumber hanya dibaca dan tidak diubah oleh Proposal Management.';}catch(e){$('surveyStatus').textContent=e.message+' Silakan gunakan pengisian manual.';}});
+        $('addRab').onclick = () => addRabRow(); addRabRow();
+        /* Instruksi AI dijalankan di server (backend/prompts.py). */
+        function val(id) {return $(id).value.trim()}
+        function getRab() {return [...document.querySelectorAll('#rabBody tr')].map(tr => ({name: tr.querySelector('.rname').value.trim(), qty: Number(tr.querySelector('.rqty').value) || 0, unit: tr.querySelector('.runit').value.trim(), price: Number(tr.querySelector('.rprice').value) || 0})).filter(x => x.name)}
+        function fileImages(group) {
+            const local=files[group].map(f => ({name:f.name,url:URL.createObjectURL(f)}));
+            if(!selectedSurveyRecord)return local;
+            const d=selectedSurveyRecord;
+            if(group==='portrait' && !local.length){const u=d.portrait_photo_url||d.profile_photo_url||d.photo_url;return u?[{name:'Foto diri dari Survei GPS',url:u}]:local}
+            if(group==='ktp' && !local.length){const u=d.ktp_photo_url||d.ktp_url;return u?[{name:'Foto KTP dari Survei GPS',url:u}]:local}
+            if(group==='survey'){const source=d.business_photos||d.condition_photos||d.survey_photos||[];return [...local,...source.map((x,i)=>({name:x.name||('Foto kondisi '+(i+1)),url:x.url||x.photo_url||x.signed_url})).filter(x=>x.url)]}
+            return local;
+        }
+        function para(s, fallback = 'Belum ada keterangan yang diisi.') {return s ? `<p>${esc(s).replace(/\n/g, '<br>')}</p>` : `<p class="muted">${fallback}</p>`}
+        function makeProposal(narrative) {
+            const title = val('title'), app = val('applicant'), business = val('business'), territory = val('territory'), date = val('date') || new Date().toISOString().slice(0, 10);
+            const dateText = new Date(date + 'T00:00:00').toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'});
+            const rab = getRab(), total = rab.reduce((a, x) => a + x.qty * x.price, 0);
+            const rabRows = rab.map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.name)}</td><td>${x.qty}</td><td>${esc(x.unit)}</td><td>${rupiah(x.price)}</td><td>${rupiah(x.qty * x.price)}</td></tr>`).join('');
+            const pics = (group, label) => {let arr = fileImages(group); return arr.length ? `<div class="photo-grid">${arr.map(x => `<div class="photo-card"><img src="${x.url}"><div>${esc(label)}: ${esc(x.name)}</div></div>`).join('')}</div>` : `<p class="muted">Belum ada gambar ${label.toLowerCase()} yang dilampirkan.</p>`};
+            const secretary = val('secretary'), chair = val('chair');
+            const scope = esc(territory);
+            const pages = [];
+            pages.push(`<section class="paper cover"><div class="org">IKATAN PERSAUDARAAN LIMA LIMA LIMA</div><div class="rule"></div><div class="sub">PROPOSAL</div><h1>${esc(title)}</h1><div class="sub">Diajukan oleh</div><h2>${esc(app)}</h2><div>${esc(business)}</div><div class="meta">DPS Kecamatan ${scope}<br>Tahun ${new Date(date + 'T00:00:00').getFullYear()}</div></section>`);
+            pages.push(`<section class="paper doc"><div class="page-title">IDENTITAS PEMOHON DAN PENGUSUL</div><table><tr><th colspan="2">Identitas Pemohon</th></tr><tr><td>Kategori proposal</td><td>${esc(val('proposalCategory'))}</td></tr><tr><td>Tipe pengusul</td><td>${esc(val('applicantType'))}</td></tr><tr><td>Nama pemohon / organisasi pengusul</td><td>${esc(app)}</td></tr><tr><td>Objek / unit / kegiatan yang diajukan</td><td>${esc(business)}</td></tr><tr><td>Jenis pengajuan</td><td>${esc(val('kind') || '-')}</td></tr><tr><td>Bidang / jenis kegiatan</td><td>${esc(val('sector') || '-')}</td></tr><tr><td>Alamat / lokasi</td><td>${esc(val('address') || '-')}</td></tr><tr><td>Wilayah pengusul</td><td>DPS Kecamatan ${scope}</td></tr><tr><td>Judul proposal</td><td>${esc(title)}</td></tr></table><h2>KATA PENGANTAR</h2>${para(narrative.kata_pengantar)}<h2>DAFTAR ISI</h2><ol><li>BAB I Pendahuluan</li><li>BAB II Profil Pemohon</li><li>BAB III Permasalahan dan Kebutuhan</li><li>BAB IV Maksud dan Tujuan</li><li>BAB V Rencana Pemanfaatan Pengajuan</li><li>BAB VI Rencana Anggaran Biaya</li><li>BAB VII Penutup</li><li>Dokumentasi dan Lampiran</li><li>Halaman Pengesahan</li></ol></section>`);
+            pages.push(`<section class="paper doc"><h2>BAB I · PENDAHULUAN</h2><h3>A. Latar Belakang</h3>${para(narrative.latar_belakang)}<h3>B. Maksud Pengajuan</h3>${para(narrative.maksud_tujuan)}<h2>BAB II · PROFIL PEMOHON</h2>${para(narrative.profil_umkm)}<h2>BAB III · PERMASALAHAN DAN KEBUTUHAN</h2>${para(narrative.permasalahan_kebutuhan)}</section>`);
+            pages.push(`<section class="paper doc"><h2>BAB IV · MAKSUD DAN TUJUAN</h2>${para(narrative.maksud_tujuan)}<h2>BAB V · RENCANA PEMANFAATAN PENGAJUAN</h2>${para(narrative.rencana_pemanfaatan)}<h2>BAB VI · RENCANA ANGGARAN BIAYA</h2><p>Rincian anggaran berikut disalin dari isian RAB pengusul.</p><table><thead><tr><th>No.</th><th>Uraian</th><th>Volume</th><th>Satuan</th><th>Harga Satuan</th><th>Jumlah</th></tr></thead><tbody>${rabRows || '<tr><td colspan="6">Belum ada item RAB.</td></tr>'}</tbody><tfoot><tr><th colspan="5" style="text-align:right">TOTAL</th><th>${rupiah(total)}</th></tr></tfoot></table><h2>BAB VII · PENUTUP</h2>${para(narrative.penutup)}</section>`);
+            pages.push(`<section class="paper doc"><h2>LAMPIRAN IDENTITAS PEMOHON / PENGUSUL</h2><h3>1. Foto Diri Pemohon</h3>${pics('portrait', 'Foto diri pemohon')}<h3>2. Foto KTP Pemohon</h3>${pics('ktp', 'Foto KTP pemohon')}<h2>3. DOKUMENTASI KONDISI USAHA / KEGIATAN</h2><p>Dokumentasi kondisi aktual dilampirkan terpisah dari gambar rencana atau spesifikasi barang.</p>${pics('survey', 'Dokumentasi kondisi usaha/kegiatan')}<h2>GAMBAR PENDUKUNG PERMOHONAN</h2><p>Gambar pendukung barang, mesin, spesifikasi, desain fasilitas, atau contoh barang.</p>${pics('support', 'Gambar pendukung permohonan')}</section>`);
+            pages.push(`<section class="paper doc"><h2 class="page-title">HALAMAN PENGESAHAN</h2><p>Proposal berjudul <b>${esc(title)}</b> yang diajukan oleh <b>${esc(app)}</b> untuk <b>${esc(business)}</b>, telah disampaikan melalui DPS Kecamatan ${scope} untuk ditinjau sesuai ketentuan yang berlaku.</p><div class="signatures"><div class="signbox"><div><b>Diketahui,</b><br>Sekretaris DPS Kecamatan ${scope}</div><div class="signspace"></div><div class="signname">${secretary ? esc(secretary) : '[Nama Sekretaris belum tersedia]'}</div></div><div class="signbox"><div>${esc(territory)}, ${dateText}<br><b>Ketua DPS Kecamatan ${scope}</b></div><div class="signspace"></div><div class="signname">${chair ? esc(chair) : '[Nama Ketua belum tersedia]'}</div></div></div><p class="muted" style="margin-top:38px;font-size:12px">Catatan prototipe: nama pejabat di atas masih berupa isian simulasi. Pada integrasi SIMPATI, nama diambil otomatis dari data pejabat sesuai wilayah DPS. Jika belum tersedia, pengesahan harus ditandai belum lengkap.</p><h2>LAMPIRAN</h2><p>Lampiran terdiri dari dokumentasi kondisi lapangan, gambar pendukung permohonan, serta dokumen lain yang tersedia dan relevan. Pemeriksaan kelengkapan lampiran dilakukan oleh DPS sebelum proposal diajukan.</p></section>`);
+            $('proposal').innerHTML = pages.join('');
+            $('workspace').style.display = 'none'; $('proposal').style.display = 'block'; $('toolbar').style.display = 'flex'; window.scrollTo(0, 0);
+        }
+        $('proposalForm').addEventListener('submit', async e => {
+            e.preventDefault(); if (!$('proposalForm').reportValidity()) return;
+            if (!val('title')) {$('formStatus').textContent = 'Judul proposal wajib diisi oleh DPS.'; return }
+            const btn = $('proposalForm').querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'PROPOSAL SEDANG DIKERJAKAN'; $('formStatus').textContent = 'Sedang diproses. Mohon tunggu, jangan tutup halaman.';
+            const toBase64 = async file => {const dataUrl = await new Promise((resolve, reject) => {const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(new Error('Gagal membaca gambar ' + file.name)); reader.readAsDataURL(file)}); return {name: file.name, mime_type: file.type, data: String(dataUrl).split(',')[1]}};
+            const payload = {title: val('title'), proposal_category: val('proposalCategory'), applicant_type: val('applicantType'), data_source: val('dataSource'), source_survey_id: $('verifiedSurvey').value || null, applicant: val('applicant'), business: val('business'), kind: val('kind'), sector: val('sector'), address: val('address'), verifier: val('verifier'), territory: val('territory'), date: val('date'), condition: val('condition'), problem: val('problem'), purpose: val('purpose'), utilization: val('utilization'), rab: getRab(), survey_images: [], support_images: []};
+            try {if (payload.data_source === 'survey' && !payload.source_survey_id) throw new Error('Pilih hasil verifikasi Survei GPS atau ubah sumber data menjadi pengisian manual.'); if (files.portrait.length + files.ktp.length + files.survey.length + files.support.length > 12) throw new Error('Maksimal 12 gambar total untuk satu proses generate.'); const allFiles=[...files.portrait,...files.ktp,...files.survey,...files.support]; const totalBytes = allFiles.reduce((n, f) => n + f.size, 0); if (totalBytes > 18 * 1024 * 1024) throw new Error('Total ukuran gambar maksimal 18 MB.'); payload.survey_images = await Promise.all(files.survey.map(toBase64)); payload.support_images = await Promise.all(files.support.map(toBase64)); const response = await fetch('/api/generate', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Requested-With': 'proposal'}, body: JSON.stringify(payload)}); const result = await response.json().catch(() => ({})); if (!response.ok) {const dt = result.detail; throw new Error(typeof dt === 'string' ? dt : (Array.isArray(dt) ? dt.map(x => x.msg).join('; ') : 'Gagal diproses.'))} if (result.title !== payload.title) throw new Error('Validasi judul gagal. Proposal tidak dibuat.'); makeProposal(result.narrative); $('formStatus').textContent = 'Proposal berhasil disusun. Periksa seluruh isi sebelum dicetak.'}
+            catch (err) {$('formStatus').textContent = 'Gagal membuat proposal: ' + err.message + ' Pastikan backend Proposal Management sudah berjalan.'}
+            finally {btn.disabled = false; btn.textContent = 'GENERATE PROPOSAL'}
+        });
+        async function checkAIStatus(){
+            try{
+                const r = await fetch('/api/ai-status');
+                const s = await r.json();
+
+                $('aiStatus').textContent = s.configured
+                    ? 'Layanan penyusunan proposal telah dikonfigurasi. Kesiapan layanan diperiksa saat proses pembuatan proposal.'
+                    : 'Layanan penyusunan proposal belum tersedia.';
+
+            }catch(e){
+                $('aiStatus').textContent = 'Layanan penyusunan proposal belum dapat diakses.';
+            }
+        }
+        checkAIStatus();
+        $('backBtn').onclick = () => {$('proposal').style.display = 'none'; $('toolbar').style.display = 'none'; $('workspace').style.display = 'grid'; window.scrollTo(0, 0)};
+        const APP_TITLE = document.title;
+        function pdfName() {const n = [val('business'), val('title')].filter(Boolean).join(' - ') || 'Proposal'; return n.replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim()}
+        window.addEventListener('beforeprint', () => {if ($('proposal').style.display === 'block') document.title = pdfName()});
+        window.addEventListener('afterprint', () => {document.title = APP_TITLE});
+        $('printBtn').onclick = () => window.print();
+        $('sampleBtn').onclick = () => {const d = {title: 'Proposal Pengembangan Usaha', applicant: 'Nama Pemohon Contoh', business: 'Usaha Contoh', sector: 'Kuliner', address: 'Alamat usaha contoh', territory: 'Kecamatan Contoh, Kabupaten Contoh', condition: 'Usaha telah berjalan dan melayani pelanggan di lingkungan sekitar. Keterangan ini hanya contoh untuk menguji tata letak.', problem: 'Pemohon menyampaikan adanya kendala dalam kegiatan produksi. Rincian kendala perlu disesuaikan dengan kondisi sebenarnya.', purpose: 'Mendukung pengembangan kegiatan usaha sesuai kebutuhan yang diajukan pemohon.', utilization: 'Bantuan akan dimanfaatkan untuk kegiatan usaha sebagaimana rincian RAB.'}; Object.entries(d).forEach(([k, v]) => $(k).value = v); addRabRow({name: 'Contoh barang sesuai permohonan', qty: 1, unit: 'unit', price: 1000000}); $('formStatus').textContent = 'Data contoh dimasukkan. Ganti seluruh data contoh dengan data sebenarnya sebelum pengajuan.'};
+        $('date').value = new Date().toISOString().slice(0, 10);
+        checkSurveyEntitlement();
+    </script>
+<script>
+(function(){
+  const nativeFetch=window.fetch.bind(window);
+  window.fetch=async function(){const r=await nativeFetch.apply(null,arguments);if(r.status===401)location.replace('/login?expired=1');return r};
+  document.getElementById('logoutBtn').addEventListener('click',async function(){
+    try{await nativeFetch('/api/auth/logout',{method:'POST',headers:{'X-Requested-With':'proposal'}})}catch(e){}
+    location.replace('/login');
+  });
+  nativeFetch('/api/me',{headers:{'Accept':'application/json'}}).then(r=>{if(!r.ok)throw new Error('sesi');return r.json()}).then(me=>{
+    window.__me=me;
+    document.getElementById('userbarText').textContent='Admin DPS · '+me.territory+' · '+me.username;
+    const set=(id,v,ro)=>{const el=document.getElementById(id);if(el){el.value=v||'';if(ro)el.readOnly=true}};
+    set('territory',me.territory,true);set('chair',me.chair);set('secretary',me.secretary);
+    const miss=[];if(!me.chair)miss.push('Ketua');if(!me.secretary)miss.push('Sekretaris');
+    if(miss.length){const s=document.getElementById('formStatus');if(s)s.textContent='Data '+miss.join(' dan ')+' DPS belum tersedia di SIMPATI 555 (perlu pengurus berstatus DISAHKAN dan wilayah terverifikasi).'}
+  }).catch(()=>location.replace('/login?expired=1'));
+})();
+</script>
+</body>
+
+</html>
