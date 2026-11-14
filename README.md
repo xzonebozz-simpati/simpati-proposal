@@ -13,16 +13,22 @@ Proposal --hasil verifikasi kecamatan akun--> Survey GPS
 
 - Password tidak pernah disimpan di Proposal. Wilayah, Ketua, dan Sekretaris selalu dari SIMPATI 555.
 - Wilayah untuk Survey GPS diambil dari sesi login di server, bukan dari browser.
-- Akun dinonaktifkan / password diubah Superadmin -> sesi Proposal otomatis tidak berlaku (maks. 1 menit).
+- Akun dinonaktifkan / password direset Superadmin -> sesi Proposal otomatis tidak berlaku (maks. 1 menit).
 - Foto diri dan KTP pemohon tidak dikirim ke server; hanya dipakai untuk lampiran cetak di browser.
 
 ## Menyiapkan akun (oleh Superadmin)
 
-1. SIMPATI 555 > menu **Akun** > buat akun peran **ADMIN_DPS**, pilih wilayah sampai tingkat **kecamatan**.
-2. Pemilik akun login sekali di SIMPATI 555 (`/admin/login`) untuk mengganti password awal.
-   Sebelum itu Proposal menolak login ("Password awal belum diganti").
-3. Agar Ketua/Sekretaris muncul otomatis, pengurus DPS kecamatan itu harus berstatus **DISAHKAN** dan wilayahnya terverifikasi.
-4. Fitur hasil verifikasi mensyaratkan modul **SURVEI_GPS** pada lisensi.
+Akun Proposal adalah akun khusus **Admin Proposal** (tingkat DPS/kecamatan), terpisah dari akun admin wilayah
+SIMPATI 555 dan **tidak dapat masuk ke dashboard 555**.
+
+1. SIMPATI 555 (login Superadmin) > kartu **Akun Admin Proposal** > isi username, nama pemilik, password awal
+   (min. 12 karakter), lalu pilih wilayah sampai **kecamatan**.
+2. Serahkan username dan password awal kepada pemilik. Saat login pertama di Proposal, pemilik **wajib membuat
+   password pribadi** (halaman Ganti Password muncul otomatis).
+3. Lupa password: Superadmin memakai tombol **Reset Password** (pemilik wajib menggantinya lagi). Menonaktifkan
+   akun memutus akses Proposal dalam maksimal 1 menit.
+4. Agar Ketua/Sekretaris muncul otomatis, pengurus DPS kecamatan itu harus berstatus **DISAHKAN** dan wilayahnya terverifikasi.
+5. Fitur hasil verifikasi mensyaratkan modul **SURVEI_GPS** pada lisensi.
 
 ## Environment Variables
 

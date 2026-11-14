@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py index.html login.html ./
+COPY app.py index.html login.html ganti-password.html ./
 COPY backend ./backend
 
 ENV PYTHONUNBUFFERED=1

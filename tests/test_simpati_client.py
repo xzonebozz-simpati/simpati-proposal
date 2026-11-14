@@ -103,6 +103,26 @@ class SimpatiTests(unittest.TestCase):
         with self.assertRaises(UpstreamError):
             self.client(lambda n, kw: Resp(200, sign({"ok": True, "profile": bad, "nonce": n}))).login("a", "b")
 
+    def test_change_password_ok_and_payload(self):
+        new_profile = dict(PROFILE, account_version="v2", must_change_password=False)
+        c = self.client(lambda n, kw: Resp(200, sign({"ok": True, "profile": new_profile, "nonce": n})))
+        self.assertEqual(c.change_password("dps.tambang", "lama", "baru-baru-baru")["account_version"], "v2")
+        _, url, kw = c.http.calls[0]
+        self.assertEqual(url, "https://simpati.test/api/integrasi/proposal/password")
+        self.assertEqual((kw["json"]["old_password"], kw["json"]["new_password"]), ("lama", "baru-baru-baru"))
+
+    def test_change_password_denied_reasons(self):
+        for reason in ("invalid_credentials", "weak_password", "same_password"):
+            c = self.client(lambda n, kw, r=reason: Resp(403, sign({"ok": False, "reason": r, "nonce": n})))
+            with self.assertRaises(AccessDenied) as ctx:
+                c.change_password("a", "b", "c")
+            self.assertEqual(ctx.exception.reason, reason)
+
+    def test_initial_password_flag_is_passed_through(self):
+        flagged = dict(PROFILE, must_change_password=True)
+        c = self.client(lambda n, kw: Resp(200, sign({"ok": True, "profile": flagged, "nonce": n})))
+        self.assertTrue(c.login("a", "b")["must_change_password"])
+
     def test_not_configured(self):
         with self.assertRaises(UpstreamError):
             SimpatiClient("", "", 5, http=FakeHttp(lambda n, kw: None)).login("a", "b")

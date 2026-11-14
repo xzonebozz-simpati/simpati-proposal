@@ -43,8 +43,9 @@ _profiles: dict[str, tuple[float, dict]] = {}
 
 DENIED_MESSAGES = {
     "invalid_credentials": (401, "Username atau password salah."),
-    "role_not_allowed": (403, "Akun ini tidak memiliki akses Proposal. Hanya akun Admin DPS yang dibuat Superadmin."),
-    "must_change_password": (403, "Password awal belum diganti. Login ke SIMPATI 555 terlebih dahulu untuk menggantinya."),
+    "role_not_allowed": (403, "Akun ini bukan akun Admin Proposal. Minta Superadmin membuatkannya di menu Akun Admin Proposal."),
+    "weak_password": (422, "Password baru minimal 12 karakter dan tidak boleh sama dengan username."),
+    "same_password": (422, "Password baru harus berbeda dari password saat ini."),
     "scope_invalid": (403, "Wilayah akun belum dikonfigurasi dengan benar di SIMPATI 555. Hubungi Superadmin."),
     "account_inactive": (403, "Akun dinonaktifkan atau tidak ditemukan. Hubungi Superadmin."),
     "license_restricted": (403, "Lisensi SIMPATI sedang dalam Mode Terbatas. Hubungi Superadmin."),
@@ -94,10 +95,20 @@ def current_profile(request: Request) -> dict | None:
     return profile
 
 
-def require_profile(request: Request) -> dict:
+def require_profile_any(request: Request) -> dict:
+    """Akun yang sedang login, termasuk yang masih wajib mengganti password awal."""
     profile = current_profile(request)
     if not profile:
         raise HTTPException(status_code=401, detail="Sesi berakhir. Silakan login kembali.")
+    return profile
+
+
+def require_profile(request: Request) -> dict:
+    """Akun yang sedang login dan sudah mengganti password awal dari Superadmin."""
+    profile = require_profile_any(request)
+    if profile.get("must_change_password"):
+        raise HTTPException(status_code=403, detail="Ganti password awal terlebih dahulu.",
+                            headers={"X-Proposal-Action": "change-password"})
     return profile
 
 
@@ -113,7 +124,12 @@ def public_profile(profile: dict) -> dict:
         "regency": profile["regency"], "district": profile["district"],
         "chair": profile.get("chair", ""), "secretary": profile.get("secretary", ""),
         "survey_enabled": bool(profile.get("survei_module_allowed")) and bool(settings.SURVEY_API_URL),
+        "must_change_password": bool(profile.get("must_change_password")),
     }
+
+
+def _home_for(profile: dict) -> str:
+    return "/ganti-password" if profile.get("must_change_password") else "/"
 
 
 # ------------------------------------------------------------------ halaman & auth
@@ -125,8 +141,9 @@ def _no_store(response):
 @app.get("/login", include_in_schema=False)
 def login_page(request: Request):
     try:
-        if current_profile(request):
-            return RedirectResponse("/", status_code=303)
+        existing = current_profile(request)
+        if existing:
+            return RedirectResponse(_home_for(existing), status_code=303)
     except HTTPException:
         pass
     return _no_store(FileResponse(BASE_DIR / "login.html"))
@@ -167,7 +184,7 @@ def login(data: LoginInput, request: Request):
         raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
     login_limiter.reset(ip)
     _profiles[profile["username"]] = (time.time(), profile)
-    response = JSONResponse({"ok": True, "profile": public_profile(profile)})
+    response = JSONResponse({"ok": True, "profile": public_profile(profile), "next": _home_for(profile)})
     _set_session_cookie(response, profile)
     return _no_store(response)
 
@@ -184,7 +201,7 @@ def logout(request: Request):
 
 
 @app.get("/api/me")
-def me(profile: dict = Depends(require_profile)):
+def me(profile: dict = Depends(require_profile_any)):
     return _no_store(JSONResponse(public_profile(profile)))
 
 
@@ -196,7 +213,55 @@ def index(request: Request):
         return RedirectResponse("/login?error=upstream", status_code=303)
     if not profile:
         return RedirectResponse("/login", status_code=303)
+    if profile.get("must_change_password"):
+        return RedirectResponse("/ganti-password", status_code=303)
     return _no_store(FileResponse(BASE_DIR / "index.html"))
+
+
+@app.get("/ganti-password", include_in_schema=False)
+def change_password_page(request: Request):
+    try:
+        profile = current_profile(request)
+    except HTTPException:
+        return RedirectResponse("/login?error=upstream", status_code=303)
+    if not profile:
+        return RedirectResponse("/login", status_code=303)
+    return _no_store(FileResponse(BASE_DIR / "ganti-password.html"))
+
+
+class ChangePasswordInput(BaseModel):
+    old_password: str = Field(default="", max_length=200)
+    new_password: str = Field(default="", max_length=200)
+
+
+@app.post("/api/auth/change-password")
+def change_password(data: ChangePasswordInput, request: Request, profile: dict = Depends(require_profile_any)):
+    require_ajax(request)
+    key = "pw:" + profile["username"]
+    wait = login_limiter.retry_after(key)
+    if wait:
+        raise HTTPException(status_code=429, detail=f"Terlalu banyak percobaan gagal. Coba lagi dalam {wait} detik.",
+                            headers={"Retry-After": str(wait)})
+    if not data.old_password or not data.new_password:
+        raise HTTPException(status_code=422, detail="Password saat ini dan password baru wajib diisi.")
+    try:
+        updated = simpati.change_password(profile["username"], data.old_password, data.new_password)
+    except AccessDenied as denied:
+        if denied.reason == "locked":
+            raise HTTPException(status_code=429, detail=f"Terlalu banyak percobaan gagal. Coba lagi dalam {denied.retry_after or 60} detik.",
+                                headers={"Retry-After": str(denied.retry_after or 60)}) from denied
+        if denied.reason == "invalid_credentials":
+            login_limiter.hit(key)
+            raise HTTPException(status_code=403, detail="Password saat ini tidak sesuai.") from denied
+        status, message = DENIED_MESSAGES.get(denied.reason, (403, "Penggantian password ditolak oleh SIMPATI 555."))
+        raise HTTPException(status_code=status, detail=message) from denied
+    except UpstreamError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
+    login_limiter.reset(key)
+    _profiles[updated["username"]] = (time.time(), updated)
+    response = JSONResponse({"ok": True, "next": _home_for(updated)})
+    _set_session_cookie(response, updated)  # versi akun berubah: terbitkan sesi baru
+    return _no_store(response)
 
 
 # ------------------------------------------------------------------ penyusunan proposal

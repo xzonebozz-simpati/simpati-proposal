@@ -57,7 +57,7 @@ button:disabled{opacity:.6;cursor:wait}
         headers:{'Content-Type':'application/json','X-Requested-With':'proposal'},
         body:JSON.stringify({username:document.getElementById('u').value,password:document.getElementById('p').value})});
       var d={};try{d=await r.json()}catch(_){}
-      if(r.ok){location.replace('/');return}
+      if(r.ok){location.replace(d.next||'/');return}
       var detail=d.detail;
       show(typeof detail==='string'?detail:'Login gagal. Periksa username dan password.','err');
       document.getElementById('p').value='';

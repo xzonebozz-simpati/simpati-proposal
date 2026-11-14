@@ -104,6 +104,13 @@ class SimpatiClient(_Base):
                                         payload={"username": username}, label=self.LABEL)
         return self._profile_or_denied(status, data)
 
+    def change_password(self, username: str, old_password: str, new_password: str) -> dict:
+        status, data, _ = self._request(
+            "POST", "/api/integrasi/proposal/password",
+            payload={"username": username, "old_password": old_password, "new_password": new_password},
+            label=self.LABEL)
+        return self._profile_or_denied(status, data)
+
     @staticmethod
     def _profile_or_denied(status: int, data: dict) -> dict:
         if data.get("ok") is True and isinstance(data.get("profile"), dict):
